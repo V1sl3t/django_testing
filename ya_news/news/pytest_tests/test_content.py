@@ -2,9 +2,12 @@ import pytest
 from django.urls import reverse
 from yanews import settings
 
+FORM = 'form'
+NEWS = 'news'
+
 
 @pytest.mark.django_db
-def test_news_count(client, news_11):
+def test_news_count(client, news_home_page):
     url = reverse('news:home')
     response = client.get(url)
     object_list = response.context['object_list']
@@ -13,7 +16,7 @@ def test_news_count(client, news_11):
 
 
 @pytest.mark.django_db
-def test_news_order(client, news_11):
+def test_news_order(client, news_home_page):
     url = reverse('news:home')
     response = client.get(url)
     object_list = response.context['object_list']
@@ -23,21 +26,21 @@ def test_news_order(client, news_11):
 
 
 @pytest.mark.django_db
-def test_comments_order(client, news, comments_2, detail_url):
+def test_comments_order(client, news, comments_timezone, detail_url):
     response = client.get(detail_url)
-    assert 'news' in response.context
-    news = response.context['news']
-    all_comments = news.comment_set.all()
-    assert all_comments[0].created < all_comments[1].created
+    assert NEWS in response.context
+    news = response.context[NEWS]
+    first_comment, second_comment, *_ = news.comment_set.all()
+    assert first_comment.created < second_comment.created
 
 
 @pytest.mark.django_db
 def test_anonymous_client_has_no_form(client, detail_url):
     response = client.get(detail_url)
-    assert 'form' not in response.context
+    assert FORM not in response.context
 
 
 @pytest.mark.django_db
 def test_authorized_client_has_form(author_client, detail_url):
     response = author_client.get(detail_url)
-    assert 'form' in response.context
+    assert FORM in response.context

@@ -1,9 +1,10 @@
-import pytest
-from yanews import settings
-from news.models import News, Comment
 from datetime import datetime, timedelta
-from django.utils import timezone
+
+import pytest
 from django.urls import reverse
+from django.utils import timezone
+from news.models import Comment, News
+from yanews import settings
 
 
 @pytest.fixture
@@ -49,7 +50,7 @@ def pk_for_args(news):
 
 
 @pytest.fixture
-def news_11():
+def news_home_page():
     today = datetime.today()
     News.objects.bulk_create(
         News(title=f'Новость {index}',
@@ -60,7 +61,7 @@ def news_11():
 
 
 @pytest.fixture
-def comments_2(news, author):
+def comments_timezone(news, author):
     now = timezone.now()
     for index in range(2):
         comment = Comment.objects.create(
