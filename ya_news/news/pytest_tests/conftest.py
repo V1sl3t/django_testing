@@ -51,19 +51,19 @@ def pk_for_args(news):
 
 
 @pytest.fixture
-def news_n():
+def news_list():
     today = datetime.today()
-    news_n = News.objects.bulk_create(
+    news_list = News.objects.bulk_create(
         News(title=f'Новость {index}',
              text='Просто текст.',
              date=today - timedelta(days=index))
         for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
     )
-    return news_n
+    return news_list
 
 
 @pytest.fixture
-def comments_n(news, author):
+def comments_list(news, author):
     now = timezone.now()
     for index in range(2):
         comment = Comment.objects.create(
@@ -71,6 +71,8 @@ def comments_n(news, author):
         )
         comment.created = now + timedelta(days=index)
         comment.save()
+    comments_list = Comment.objects.all()
+    return comments_list
 
 
 @pytest.fixture

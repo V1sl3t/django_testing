@@ -8,7 +8,7 @@ NEWS = 'news'
 
 
 @pytest.mark.django_db
-def test_news_count(client, news_n):
+def test_news_count(client, news_list):
     url = reverse('news:home')
     response = client.get(url)
     object_list = response.context['object_list']
@@ -17,7 +17,7 @@ def test_news_count(client, news_n):
 
 
 @pytest.mark.django_db
-def test_news_order(client, news_n):
+def test_news_order(client, news_list):
     url = reverse('news:home')
     response = client.get(url)
     object_list = response.context['object_list']
@@ -27,7 +27,7 @@ def test_news_order(client, news_n):
 
 
 @pytest.mark.django_db
-def test_comments_order(client, news, comments_n, detail_url):
+def test_comments_order(client, news, comments_list, detail_url):
     response = client.get(detail_url)
     assert NEWS in response.context
     news = response.context[NEWS]
