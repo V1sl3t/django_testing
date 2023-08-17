@@ -3,9 +3,10 @@ from http import HTTPStatus
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
+from pytils.translit import slugify
+
 from notes.forms import WARNING
 from notes.models import Note
-from pytils.translit import slugify
 
 User = get_user_model()
 
@@ -39,7 +40,7 @@ class TestNoteCreation(TestCase):
         redirect_url = reverse('notes:success')
         self.assertRedirects(response, redirect_url)
         notes_count_after = Note.objects.count()
-        self.assertLess(notes_count_before, notes_count_after)
+        self.assertEqual(notes_count_after - notes_count_before, 1)
         note = Note.objects.get()
         self.assertEqual(note.text, self.NOTE_TEXT)
         self.assertEqual(note.title, self.NOTE_TITLE)
@@ -53,7 +54,7 @@ class TestNoteCreation(TestCase):
         response = self.author_client.post(url, data=self.form_data)
         self.assertRedirects(response, reverse('notes:success'))
         notes_count_after = Note.objects.count()
-        self.assertLess(notes_count_before, notes_count_after)
+        self.assertEqual(notes_count_after - notes_count_before, 1)
         new_note = Note.objects.get()
         expected_slug = slugify(self.form_data['title'])
         self.assertEqual(new_note.slug, expected_slug)
@@ -108,7 +109,7 @@ class TestNoteEditDelete(TestCase):
         response = self.author_client.delete(self.delete_url)
         self.assertRedirects(response, self.success_url)
         notes_count_after = Note.objects.count()
-        self.assertLess(notes_count_after, notes_count_before)
+        self.assertEqual(notes_count_before - notes_count_after, 1)
 
     def test_user_cant_delete_comment_of_another_user(self):
         notes_count_before = Note.objects.count()

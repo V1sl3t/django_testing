@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import pytest
 from django.urls import reverse
 from django.utils import timezone
+
 from news.models import Comment, News
 from yanews import settings
 
@@ -50,18 +51,19 @@ def pk_for_args(news):
 
 
 @pytest.fixture
-def news_home_page():
+def news_n():
     today = datetime.today()
-    News.objects.bulk_create(
+    news_n = News.objects.bulk_create(
         News(title=f'Новость {index}',
              text='Просто текст.',
              date=today - timedelta(days=index))
         for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
     )
+    return news_n
 
 
 @pytest.fixture
-def comments_timezone(news, author):
+def comments_n(news, author):
     now = timezone.now()
     for index in range(2):
         comment = Comment.objects.create(

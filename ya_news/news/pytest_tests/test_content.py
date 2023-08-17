@@ -1,5 +1,6 @@
 import pytest
 from django.urls import reverse
+
 from yanews import settings
 
 FORM = 'form'
@@ -7,7 +8,7 @@ NEWS = 'news'
 
 
 @pytest.mark.django_db
-def test_news_count(client, news_home_page):
+def test_news_count(client, news_n):
     url = reverse('news:home')
     response = client.get(url)
     object_list = response.context['object_list']
@@ -16,7 +17,7 @@ def test_news_count(client, news_home_page):
 
 
 @pytest.mark.django_db
-def test_news_order(client, news_home_page):
+def test_news_order(client, news_n):
     url = reverse('news:home')
     response = client.get(url)
     object_list = response.context['object_list']
@@ -26,7 +27,7 @@ def test_news_order(client, news_home_page):
 
 
 @pytest.mark.django_db
-def test_comments_order(client, news, comments_timezone, detail_url):
+def test_comments_order(client, news, comments_n, detail_url):
     response = client.get(detail_url)
     assert NEWS in response.context
     news = response.context[NEWS]
